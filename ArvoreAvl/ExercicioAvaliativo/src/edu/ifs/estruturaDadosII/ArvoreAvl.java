@@ -8,6 +8,9 @@ public class ArvoreAvl {
         No no = new No(valor);
         inserirAVL(this.raiz, no);
     }
+    public No localizar(int valor) throws Exception{
+        return localizarAVL(this.raiz,valor);
+    }
     private void inserirAVL(No compararNo, No novoNo) throws Exception {
 
         if (compararNo == null) {
@@ -31,11 +34,23 @@ public class ArvoreAvl {
                     inserirAVL(compararNo.getDireita(), novoNo); // recussão
                 }
             } else {
-                throw new Exception("No já existe na árvore");
+                throw new NoAlreadyExistException("Impossível inserir dois ou mais nós com o mesmo valor (chave)");
             }
         }
     }
+    private No localizarAVL(No compararNo, int valor) throws Exception {
+        if(compararNo.getValor() == valor){
+            return compararNo;
+        }else if(compararNo.getEsquerda() != null) {
 
+            return localizarAVL(compararNo.getEsquerda(),valor);
+
+        }else if(compararNo.getDireita() != null){
+             return localizarAVL(compararNo.getDireita(),valor);
+        }else{
+            throw new NoNotFoundException("Valor (chave) não encontrada");
+        }
+    }
     public void remover(int valor) {
         removerAVL(this.raiz, valor);
     }
@@ -96,6 +111,7 @@ public class ArvoreAvl {
         }
         noAux = null;
     }
+
     // -- FUNCOES
 
 
