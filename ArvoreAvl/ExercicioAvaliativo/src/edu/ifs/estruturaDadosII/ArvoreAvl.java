@@ -4,14 +4,17 @@ public class ArvoreAvl {
     private No raiz;
 
     // -- FUNCOES
-    public void inserir(int valor) throws Exception {
+    public No inserir(No novoNo) throws Exception {
+        return inserirAVL(this.raiz, novoNo);
+    }
+    public No inserir(int valor) throws Exception {
         No no = new No(valor);
-        inserirAVL(this.raiz, no);
+        return inserirAVL(this.raiz, no);
     }
     public No localizar(int valor) throws Exception{
         return localizarAVL(this.raiz,valor);
     }
-    private void inserirAVL(No compararNo, No novoNo) throws Exception {
+    private No inserirAVL(No compararNo, No novoNo) throws Exception {
 
         if (compararNo == null) {
             this.raiz = novoNo;
@@ -37,84 +40,149 @@ public class ArvoreAvl {
                 throw new NoAlreadyExistException("Impossível inserir dois ou mais nós com o mesmo valor (chave)");
             }
         }
+        return novoNo;
     }
     private No localizarAVL(No compararNo, int valor) throws Exception {
         if(compararNo.getValor() == valor){
             return compararNo;
-        }else if(compararNo.getEsquerda() != null) {
-
+        }else if(compararNo.getEsquerda() != null && compararNo.getEsquerda().getValor() >= valor) {
             return localizarAVL(compararNo.getEsquerda(),valor);
-
-        }else if(compararNo.getDireita() != null){
+        }else if(compararNo.getDireita() != null && compararNo.getDireita().getValor() <= valor){
              return localizarAVL(compararNo.getDireita(),valor);
         }else{
             throw new NoNotFoundException("Valor (chave) não encontrada");
         }
     }
-    public void remover(int valor) {
+    public void remover(int valor) throws Exception {
         removerAVL(this.raiz, valor);
     }
-    private void removerAVL(No compararNo, int valor) {
-        if (compararNo == null) {
-            return;
-
-        } else {
-
-            if (compararNo.getValor() > valor) {
-                removerAVL(compararNo.getEsquerda(), valor);
-
-            } else if (compararNo.getValor() < valor) {
-                removerAVL(compararNo.getDireita(), valor);
-
-            } else if (compararNo.getValor() == valor) {
-                removeNo(compararNo);
-            }
+    public void remover(No noAlvo) throws Exception {
+        removerAVL(this.raiz, noAlvo.getValor());
+    }
+    private void removerAVL(No compararNo, int valor) throws Exception {
+        if (compararNo.getValor() == valor) {
+            removerNo(compararNo);
+        } else if (compararNo.getEsquerda() != null && compararNo.getValor() >= valor) {
+            removerAVL(compararNo.getEsquerda(), valor);
+        } else if (compararNo.getDireita() != null && compararNo.getValor() <= valor) {
+            removerAVL(compararNo.getDireita(), valor);
+        }else{
+            throw new NoNotFoundException("No não encontrado");
         }
     }
-    private void removeNo(No noAlvo) {
-        No noAux;
+    private void removerNo(No noAlvo) {
+        No noHerdeiro,noHerdeiro2;
 
-        if (noAlvo.getEsquerda() == null || noAlvo.getDireita() == null) {
-
-            if (noAlvo.getPai() == null) {
+        if(noAlvo.getEsquerda() == null && noAlvo.getDireita() == null){
+            // é no folha
+            if(this.raiz == noAlvo){
                 this.raiz = null;
-                noAlvo = null;
                 return;
             }
-            noAux = noAlvo;
-
-        } else {
-            noAux = sucessor(noAlvo);
-            noAlvo.setValor(noAux.getValor());
-        }
-
-        No noAux2;
-        if (noAux.getEsquerda() != null) {
-            noAux2 = noAux.getEsquerda();
-        } else {
-            noAux2 = noAux.getDireita();
-        }
-
-        if (noAux2 != null) {
-            noAux2.setPai(noAux.getPai());
-        }
-
-        if (noAux.getPai() == null) {
-            this.raiz = noAux2;
-        } else {
-            if (noAux == noAux.getPai().getEsquerda()) {
-                noAux.getPai().setEsquerda(noAux2);
-            } else {
-                noAux.getPai().setDireita(noAux2);
+            if(noAlvo.getPai().getEsquerda() == noAlvo){
+                noAlvo.getPai().setEsquerda(null);
+            }else{
+                noAlvo.getPai().setDireita(null);
             }
-            setNoBalanco(noAux.getPai());
+            noAlvo.setPai(null);
+        }else{
+            // possui filhos na esquerda ou direita
+
+
+            noHerdeiro = noHerdeiro(noAlvo);
+
+            if(noHerdeiro.getEsquerda() != null){
+                noHerdeiro2 = noHerdeiro.getEsquerda();
+            }else{
+                noHerdeiro2 = noHerdeiro.getDireita();
+            }
+
+            if(noHerdeiro2 != null){
+                noHerdeiro2.setPai(noHerdeiro);
+            }
+
+            if (noHerdeiro.getPai() == null) {
+                this.raiz = noHerdeiro2;
+            } else {
+                if (noHerdeiro == noHerdeiro.getPai().getEsquerda()) {
+                    noHerdeiro.getPai().setEsquerda(noHerdeiro2);
+                } else {
+                    noHerdeiro.getPai().setDireita(noHerdeiro2);
+                }
+                if(this.raiz == noAlvo){
+                    if(this.raiz.getEsquerda() != null){
+                        this.raiz.getEsquerda().setPai(noHerdeiro);
+                        noHerdeiro.setEsquerda(this.raiz.getEsquerda());
+                    }
+                    if(this.raiz.getDireita() != null){
+                        this.raiz.getDireita().setPai(noHerdeiro);
+                        noHerdeiro.setDireita(this.raiz.getDireita());
+                    }
+                    this.raiz = noHerdeiro;
+                    noHerdeiro.setPai(null);
+                    setNoBalanco(noHerdeiro);
+                }else{
+                    if(noAlvo.getPai().getEsquerda() == noAlvo){
+                        noAlvo.getPai().setEsquerda(noHerdeiro);
+                    }else{
+                        noAlvo.getPai().setDireita(noHerdeiro);
+                    }
+
+                    if(noAlvo.getDireita() != null){
+                        noHerdeiro.setDireita(noAlvo.getDireita());
+                        noAlvo.getDireita().setPai(noHerdeiro);
+                    }
+                    noHerdeiro.setPai(noAlvo.getPai());
+                    setNoBalanco(noHerdeiro.getPai());
+                }
+
+            }
+
         }
-        noAux = null;
+        // não é no folha
+
+
+
+//        if (noAlvo.getEsquerda() == null || noAlvo.getDireita() == null) {
+//            // é no folha
+//            if (noAlvo.getPai() == null) {
+//                // é raiz de uma arvore com um no
+//                this.raiz = null;
+//                return;
+//            }
+//            noAux = noAlvo;
+//
+//        } else {
+//            // possui esqueda ou direita
+//            noAux = sucessor(noAlvo);
+//            //noAlvo = noAux;
+//
+//        }
+//
+//        No noAux2;
+//        if (noAux.getEsquerda() != null) {
+//            noAux2 = noAux.getEsquerda();
+//        } else {
+//            noAux2 = noAux.getDireita();
+//        }
+//
+//        if (noAux2 != null) {
+//            noAux2.setPai(noAux);
+//        }
+//
+//        if (noAux.getPai() == null) {
+//            this.raiz = noAux2;
+//        } else {
+//            if (noAux == noAux.getPai().getEsquerda()) {
+//                noAux.getPai().setEsquerda(noAux2);
+//            } else {
+//                noAux.getPai().setDireita(noAux2);
+//            }
+//            setNoBalanco(noAux.getPai());
+//        }
+
     }
-
     // -- FUNCOES
-
-
 
     // -- ROTAÇÕES
     private No rotacaoRR(No noAlvo) {
@@ -237,20 +305,20 @@ public class ArvoreAvl {
         }
 
     }
-    private No sucessor(No q) {
-        if (q.getDireita() != null) {
-            No r = q.getDireita();
-            while (r.getEsquerda() != null) {
-                r = r.getEsquerda();
+    private No noHerdeiro(No noAlvo) {
+        if (noAlvo.getEsquerda() != null) {
+            No noAux = noAlvo.getEsquerda();
+            while (noAux.getDireita() != null) {
+                noAux = noAux.getDireita();
             }
-            return r;
+            return noAux;
         } else {
-            No p = q.getPai();
-            while (p != null && q == p.getDireita()) {
-                q = p;
-                p = q.getPai();
+            No noPai = noAlvo.getPai();
+            while (noPai != null && noAlvo == noPai.getEsquerda()) {
+                noAlvo = noPai;
+                noPai = noAlvo.getPai();
             }
-            return p;
+            return noPai;
         }
     }
     // -- FERRAMENTAS
