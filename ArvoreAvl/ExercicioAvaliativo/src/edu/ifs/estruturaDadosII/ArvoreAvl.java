@@ -132,6 +132,10 @@ public class ArvoreAvl {
                         noHerdeiro.setDireita(noAlvo.getDireita());
                         noAlvo.getDireita().setPai(noHerdeiro);
                     }
+                    if(noAlvo.getEsquerda() != null){
+                        noHerdeiro.setEsquerda(noAlvo.getEsquerda());
+                        noAlvo.getEsquerda().setPai(noHerdeiro);
+                    }
                     noHerdeiro.setPai(noAlvo.getPai());
                     setNoBalanco(noHerdeiro.getPai());
                 }

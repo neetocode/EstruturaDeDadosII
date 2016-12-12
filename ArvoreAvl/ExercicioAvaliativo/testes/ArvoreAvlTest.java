@@ -282,6 +282,24 @@ public class ArvoreAvlTest {
         assertEquals(noC.getDireita(),null);
     }
     @Test
+    public void removerFolhaExiste2() throws Exception{
+        tree.inserir(noA);
+        tree.inserir(noB);
+        tree.inserir(noC);
+        tree.inserir(noD);
+        tree.inserir(noE);
+
+        tree.remover(3);
+
+        assertEquals(noB.getPai(),null);
+        assertEquals(noB.getEsquerda(),noA);
+        assertEquals(noB.getDireita(),noD);
+
+        assertEquals(noD.getPai(),noB);
+        assertEquals(noD.getEsquerda(),null);
+        assertEquals(noD.getDireita(),noE);
+    }
+    @Test
     public void removerRaiz() throws Exception{
         tree.inserir(noA);
         tree.inserir(noB);
@@ -352,6 +370,45 @@ public class ArvoreAvlTest {
         assertEquals(noG.getPai(),noE);
         assertEquals(noG.getEsquerda(),null);
         assertEquals(noG.getDireita(),null);
+    }
+    @Test
+    public void removerNaoFolha2() throws Exception{
+        tree.inserir(noA);
+        tree.inserir(noB);
+        tree.inserir(noC);
+        tree.inserir(noD);
+        tree.inserir(noE);
+        tree.inserir(noF);
+        tree.inserir(noG);
+        No noH = tree.inserir(8);
+        No noI = tree.inserir(9);
+        No noJ = tree.inserir(10);
+
+        tree.remover(8);
+
+        assertEquals(noD.getPai(),null);
+        assertEquals(noD.getEsquerda(),noB);
+        assertEquals(noD.getDireita(),noG);
+
+        assertEquals(noG.getPai(),noD);
+        assertEquals(noG.getEsquerda(),noF);
+        assertEquals(noG.getDireita(),noI);
+
+        assertEquals(noF.getPai(),noG);
+        assertEquals(noF.getEsquerda(),noE);
+        assertEquals(noF.getDireita(),null);
+
+        assertEquals(noE.getPai(),noF);
+        assertEquals(noE.getEsquerda(),null);
+        assertEquals(noE.getDireita(),null);
+
+        assertEquals(noI.getPai(),noG);
+        assertEquals(noI.getEsquerda(),null);
+        assertEquals(noI.getDireita(),noJ);
+
+        assertEquals(noJ.getPai(),noI);
+        assertEquals(noJ.getEsquerda(),null);
+        assertEquals(noJ.getDireita(),null);
     }
     @Test(expected = NoNotFoundException.class)
     public void removerNaoExiste() throws Exception{
