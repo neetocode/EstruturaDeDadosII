@@ -141,49 +141,7 @@ public class ArvoreAvl {
                 }
 
             }
-
         }
-        // não é no folha
-
-
-
-//        if (noAlvo.getEsquerda() == null || noAlvo.getDireita() == null) {
-//            // é no folha
-//            if (noAlvo.getPai() == null) {
-//                // é raiz de uma arvore com um no
-//                this.raiz = null;
-//                return;
-//            }
-//            noAux = noAlvo;
-//
-//        } else {
-//            // possui esqueda ou direita
-//            noAux = sucessor(noAlvo);
-//            //noAlvo = noAux;
-//
-//        }
-//
-//        No noAux2;
-//        if (noAux.getEsquerda() != null) {
-//            noAux2 = noAux.getEsquerda();
-//        } else {
-//            noAux2 = noAux.getDireita();
-//        }
-//
-//        if (noAux2 != null) {
-//            noAux2.setPai(noAux);
-//        }
-//
-//        if (noAux.getPai() == null) {
-//            this.raiz = noAux2;
-//        } else {
-//            if (noAux == noAux.getPai().getEsquerda()) {
-//                noAux.getPai().setEsquerda(noAux2);
-//            } else {
-//                noAux.getPai().setDireita(noAux2);
-//            }
-//            setNoBalanco(noAux.getPai());
-//        }
 
     }
     // -- FUNCOES
